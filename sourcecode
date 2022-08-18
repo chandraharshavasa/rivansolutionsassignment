@@ -1,0 +1,23 @@
+from bs4 import BeautifulSoup
+import requests
+from csv import writer
+
+url= "https://intake.steerhealth.io/doctor-search/aa1f8845b2eb62a957004eb491bb8ba70a"
+page = requests.get(url)
+
+soup = BeautifulSoup(page.content, 'html.parser')
+lists = soup.find_all('div', class_="Doctorinfor")
+
+with open('housing.csv', 'w', encoding='utf8', newline='') as f:
+    thewriter = writer(f)
+    header = ['avatar', 'details', 'address', 'content']
+    thewriter.writerow(header)
+
+    for list in lists:
+        avatar = list.find('a', class_="avatar").text.replace('\n', '')
+        details = list.find('div', class_="details").text.replace('\n', '')
+        address = list.find('span', class_="address").text.replace('\n', '')
+        content = list.find('div', class_="content").text.replace('\n', '')
+        
+        info = [avatar,details,address,content]
+        thewriter.writerow(info)
